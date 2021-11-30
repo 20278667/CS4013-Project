@@ -1,0 +1,27 @@
+import java.util.List;
+import java.util.ArrayList;
+import java.io.FileWriter;
+import java.io.FileReader;
+import java.io.BufferedReader;
+import java.io.IOException ;
+
+
+public class CSVWriter {
+    
+    	 public static void CSVWriter( String HotelType, String RoomType, String NumberofRooms, String MinOccupancy, String MaxOccupancy, String weekRates) {
+         List<Reservations> users = new ArrayList<Reservations>();
+         Resevations = new Reservations () ;
+      
+    }
+
+         
+         
+         //Unsure on what to do next. I do know that I need to import a Buffered reader, FileWriter, FileReader and an IOException
+         // https://mkyong.com/java/how-to-write-to-file-in-java-bufferedwriter-example/ That website helped me a lot and we also need .append functions
+         FileWriter file = new FileWriter(      ) ;
+         
+         
+         
+        }
+        
+    
