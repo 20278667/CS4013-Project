@@ -10,7 +10,6 @@ public class ReservationSystem {
 	final LocalDate errorDate = LocalDate.MIN;
 	
 	ArrayList<Reservation> reservations;
-	ArrayList<Reservation> cancellations;
 	ArrayList<Hotel> hotels;
 	ArrayList<Customer> customers;
 	Scanner in;
@@ -23,11 +22,10 @@ public class ReservationSystem {
 	 * Creates new reservation system and sets up available rooms and hotels.
 	 */
 	public ReservationSystem() throws IOException {
-		reservations = new ArrayList<Reservation>();
-		cancellations = new ArrayList<Reservation>();
+		hotels = FileSystem.readHotels();
+		customers = FileSystem.readCustomers();
+		reservations = FileSystem.readReservations(hotels);
 		in = new Scanner(System.in);
-		hotels = readHotels();
-		customers = readCustomers();
 	}
 	
 	/***
@@ -97,13 +95,14 @@ public class ReservationSystem {
 	
 	/***
 	 * The process for cancelling a reservation.
+	 * @throws IOException if reservations.csv cannot be found upon successful cancellation.
 	 */
-	public void cancelReservation() {
+	public void cancelReservation() throws IOException {
 		ArrayList<Reservation> userReservations = getReservations();
 		if (userReservations == null) return;
 		System.out.println("Which reservation would you like to cancel?");
 		Reservation R = (Reservation) DisplaySystem.choices(userReservations, in, true);
-		if (R == null) { System.out.println(R == null); return; }
+		if (R == null) { return; }
 		if (!account.getIsAdmin()) {
 			if (R.type.equals("S")) { 
 				if (ChronoUnit.DAYS.between(LocalDate.now(), R.CheckInDate) <= 2) {
@@ -137,12 +136,14 @@ public class ReservationSystem {
 	
 	/***
 	 * This is the process that flags a reservation R as being cancelled.
+	 * @throws IOException if reservations.csv does not exist.
 	 */
-	public void cancel(Reservation R) {
+	public void cancel(Reservation R) throws IOException {
 		for (int i = 0; i < reservations.size(); i++) {
 			if (reservations.get(i).equals(R)) {
 				reservations.get(i).cancelled = true;
-				cancellations.add(R);
+				FileSystem.cancelReservation(R);
+				reservations.remove(i);
 				DisplaySystem.displayCancellation();
 				return;
 			}
@@ -293,8 +294,9 @@ public class ReservationSystem {
 	
 	/***
 	 * The process for logging in to the system or creating a new customer account.
+	 * @throws IOException when writing new customer account.
 	 */
-	public void Login() {
+	public void Login() throws IOException {
 		System.out.println("To access certain system features, you must be logged in. To either create an account or login, enter the account's user name.");
 		String userName = in.nextLine().trim();
 		System.out.println("Now enter your password. Please remember this, because there is no account recovery policy.");
@@ -318,64 +320,10 @@ public class ReservationSystem {
 			String name = in.nextLine();
 			account = new Customer(name, userName, pass);
 			customers.add(account);
+			FileSystem.writeCustomer(account);
 		}
 		else {
 			System.out.println("That account already exists but the given password is wrong. Please try again.");
 		}
-	}
-	
-	
-	
-	/***
-	 * Reads l4Hotels.csv and converts each line to a new hotel.
-	 * @return arraylist of hotels.
-	 * @throws IOException if file not found.
-	 * @supressWarnings is used to supress the warning of the casting of Rooms.clone() to type ArrayList<Room>.
-	 */
-	@SuppressWarnings("unchecked")
-	public ArrayList<Hotel> readHotels () throws IOException {
-		File f = new File("src/l4Hotels.csv");
-		Scanner reader = new Scanner(f);
-		ArrayList<String> lines = new ArrayList<String>();
-		while (reader.hasNextLine()) lines.add(reader.nextLine());
-		//hotelType declared separately since it holds over from prior lines
-		String HotelType = "";
-		ArrayList<Room> Rooms = new ArrayList<Room>();
-		ArrayList<Hotel> Hotels = new ArrayList<Hotel>();
-		for (int i = 0; i < lines.size(); i++) {
-			//if a line doesn't contain any digit it doesn't represent a hotel room => only match lines that include a digit
-			if (lines.get(i).matches(".*\\d")) {
-				String[] clauses = lines.get(i).split(",");
-				//save hotel data and get information for the next hotel
-				if (clauses[0].matches(".*\\S.*")) {
-					if (HotelType != "") Hotels.add(new Hotel(HotelType, (ArrayList<Room>) Rooms.clone()));
-					Rooms.clear();
-					HotelType = clauses[0];
-				}
-				int[] rates = new int[7];
-				for (int j = 0; j < rates.length; j++) {
-					rates[j] = Integer.parseInt(clauses[5 + j]);
-				}
-				Rooms.add(new Room(HotelType, clauses[1], Integer.parseInt(clauses[2]), Integer.parseInt(clauses[3]), Integer.parseInt(clauses[4]), rates));
-			}
-			if (i + 1 == lines.size()) Hotels.add(new Hotel(HotelType, Rooms));
-		}
-		reader.close();
-		return Hotels;
-	}
-	
-	public ArrayList<Customer> readCustomers() throws IOException {
-		File f = new File("src/customers.csv");
-		Scanner reader = new Scanner(f);
-		ArrayList<String> lines = new ArrayList<String>();
-		while (reader.hasNextLine()) lines.add(reader.nextLine());
-		ArrayList<Customer> Customers = new ArrayList<Customer>();
-		//staring at line 1, all lines should represent customers
-		for (int i = 1; i < lines.size(); i++) {
-			String[] clauses = lines.get(i).split(",");
-			Customers.add(new Customer(clauses[0], clauses[1], Integer.parseInt(clauses[2]), (clauses[3].equals("true") ? true : false)));
-		}
-		reader.close();
-		return Customers;
 	}
 }

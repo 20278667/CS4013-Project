@@ -1,2 +1,3 @@
 Name,CheckIn,CheckOut,Type,Hotel,Room,Cancelled
-Administrator,2021-12-22,AP,5-star,Deluxe Single,false
+Administrator,2021-12-22,2021-12-23,AP,5-star,Deluxe Single,false
+Perill,2022-01-05,2022-01-10,S,4-star,Executive Single,false

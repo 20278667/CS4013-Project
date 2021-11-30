@@ -3,8 +3,8 @@ public class Customer {
 
 	public String name;
 	public String userName;
+	public int password;
 	private boolean isAdmin;
-	private int password;
 	
 	/***
 	 * Creates a new customer object with a given name, username and hashed password.

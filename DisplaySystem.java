@@ -21,7 +21,24 @@ public class DisplaySystem {
 		}
 		char s = in.nextLine().toUpperCase().charAt(0);
 		if (s - 'A' == list.size()) return null;
-		else return list.get(s - 'A');
+		else if (s - 'A' >= 0 && s - 'A' <= list.size()) return list.get(s - 'A');
+		else {
+			boolean correctInput = false;
+			while (!correctInput) {
+				displayIncorrectInput();
+				s = in.nextLine().toUpperCase().charAt(0);
+				if (s - 'A' <= list.size() + (allowBack ? 1 : 0) && s - 'A' >= 0) correctInput = true;
+			}
+			if (s - 'A' == list.size()) return null;
+			else return list.get(s - 'A');
+		}
+	}
+	
+	/***
+	 * Text for incorrect input. Used in DisplaySystem.choices().
+	 */
+	public static void displayIncorrectInput() {
+		System.out.println("Input not recognised. Please try again.");
 	}
 	
 	/***
@@ -84,15 +101,15 @@ public class DisplaySystem {
 	/***
 	 * Displays text when there are no reservations for a user.
 	 */
-	public static void displayReservationError() {
-		System.out.println("There are no reservations to cancel.");
+	public static void displayNoReservationsError() {
+		System.out.println("There are no reservations available.");
 	}
 	
 	/***
 	 * Displays the cancellation policy as given by the specification document.
 	 */
 	public static void displayCancellationPolicy() {
-		System.out.println("Advance purchase reservations are non-refundable. For a standard reservation, the full booking value will be charged if the cancellation is received within 48 hours of check-in or if the booking is a ‘no-show’. A standard reservation is fully refundable if cancelled more than 48 hours before the check-in date.");
+		System.out.println("Advance purchase reservations are non-refundable but are 5% cheaper. For a standard reservation, the full booking value will be charged if the cancellation is received within 48 hours of check-in or if the booking is a ‘no-show’. A standard reservation is fully refundable if cancelled more than 48 hours before the check-in date.");
 	}
 	
 	/***
@@ -105,16 +122,22 @@ public class DisplaySystem {
 	}
 
 	/***
-	 * Text to be displayed 
+	 * Text to be displayed when a date is entered incorrectly.
 	 */
 	public static void displayDateError() {
 		System.out.println("There was an error with the date entered. Please try again.");
 	}
 
+	/***
+	 * Yes or no confirmation text.
+	 */
 	public static void displayConfirmation() {
 		System.out.println("Are you sure you wish to continue? Enter 'Y' to confirm or 'N' to cancel.");
 	}
-
+	
+	/***
+	 * Cancellation confirmation text.
+	 */
 	public static void displayCancellation() {
 		System.out.println("The reservation has been successfully cancelled.");
 	}

@@ -20,4 +20,12 @@ public class Room {
 	public String toString() {
 		return roomType;
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o == null) return false;
+		else if (o.getClass() != this.getClass()) return false;
+		else if (((Room)o).roomType == this.roomType && ((Room)o).hotelType == this.hotelType) return true;
+		else return false;
+	}
 }
