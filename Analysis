@@ -1,0 +1,28 @@
+import java.util.ArrayList;
+public class Analytics {
+
+      public static double income(String checkfromDate, String checktoDate, String hotel) {
+        double totalIncome = 0;
+        
+        ArrayList<Reservation> reservations = dateChecker( checkfromDate, checktoDate, hotel);
+
+
+        if (hotel.contains("Classic")) { 
+
+            for (int i = 0; i < reservations.size(); i++) {
+                totalIncome += reservations.get(i).getTotalCost();
+            }
+        } else if (hotel.contains("Deluxe")) {
+            
+            for (int i = 0; i < reservations.size(); i++) {
+                totalIncome += reservations.get(i).getTotalCost();
+            }
+        } else if (hotel.contains("Executive")) {
+            
+            for (int i = 0; i < reservations.size(); i++) {
+                totalIncome += reservations.get(i).getTotalCost();
+            }
+        }
+        return totalIncome;
+    }
+}
